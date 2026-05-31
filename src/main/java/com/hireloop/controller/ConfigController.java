@@ -29,6 +29,11 @@ public class ConfigController {
         runtimeConfig.put("targetCompanies", java.util.List.of(
             "Google", "Meta", "Apple", "Microsoft", "Amazon"
         ));
+        runtimeConfig.put("jobFilters", Map.of(
+            "minFitScore", 75,
+            "maxJobAgeInDays", 7,
+            "excludeKeywords", "contractor,temporary,part-time"
+        ));
     }
 
     @GetMapping
@@ -97,5 +102,20 @@ public class ConfigController {
     public Map<String, Object> updateTargetCompanies(@RequestBody Map<String, java.util.List<String>> data) {
         runtimeConfig.put("targetCompanies", data.get("companies"));
         return getTargetCompanies();
+    }
+
+    @GetMapping("/job-filters")
+    public Map<String, Object> getJobFilters() {
+        return (Map<String, Object>) runtimeConfig.getOrDefault("jobFilters", Map.of(
+            "minFitScore", 75,
+            "maxJobAgeInDays", 7,
+            "excludeKeywords", ""
+        ));
+    }
+
+    @PostMapping("/job-filters")
+    public Map<String, Object> updateJobFilters(@RequestBody Map<String, Object> filters) {
+        runtimeConfig.put("jobFilters", filters);
+        return getJobFilters();
     }
 }

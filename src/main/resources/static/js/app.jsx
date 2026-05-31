@@ -12,6 +12,11 @@ function App() {
   });
   const [targetCompanies, setTargetCompanies] = useState([]);
   const [newCompanyInput, setNewCompanyInput] = useState('');
+  const [jobFilters, setJobFilters] = useState({
+    minFitScore: 75,
+    maxJobAgeInDays: 7,
+    excludeKeywords: ''
+  });
   const [resumeStatus, setResumeStatus] = useState({ exists: false, size: 0 });
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
@@ -39,6 +44,10 @@ function App() {
       const companiesResponse = await fetch('/api/config/target-companies');
       const companiesData = await companiesResponse.json();
       setTargetCompanies(companiesData.companies || []);
+
+      const filtersResponse = await fetch('/api/config/job-filters');
+      const filtersData = await filtersResponse.json();
+      setJobFilters(filtersData);
     } catch (error) {
       console.error('Failed to load settings:', error);
     } finally {
@@ -72,6 +81,14 @@ function App() {
       });
       const companiesData = await companiesResponse.json();
       setTargetCompanies(companiesData.companies || []);
+
+      const filtersResponse = await fetch('/api/config/job-filters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jobFilters)
+      });
+      const filtersData = await filtersResponse.json();
+      setJobFilters(filtersData);
 
       setSettingsSaved(true);
       setTimeout(() => setSettingsSaved(false), 3000);
@@ -366,6 +383,48 @@ function App() {
                   }, '✕')
                 )
               )
+            )
+          )
+        ),
+
+        // Job Filters Section
+        React.createElement('div', { className: 'mb-8 pb-8 border-b' },
+          React.createElement('h3', { className: 'text-lg font-semibold mb-4' }, 'Job Filters'),
+          React.createElement('div', { className: 'space-y-4' },
+            React.createElement('div', null,
+              React.createElement('label', { className: 'block font-medium text-gray-700 mb-2' }, 'Minimum Fit Score: ' + jobFilters.minFitScore + '%'),
+              React.createElement('input', {
+                type: 'range',
+                min: '0',
+                max: '100',
+                value: jobFilters.minFitScore,
+                onChange: (e) => setJobFilters({ ...jobFilters, minFitScore: parseInt(e.target.value) }),
+                className: 'w-full cursor-pointer',
+                disabled: settingsLoading
+              })
+            ),
+            React.createElement('div', null,
+              React.createElement('label', { className: 'block font-medium text-gray-700 mb-2' }, 'Max Job Age: ' + jobFilters.maxJobAgeInDays + ' days'),
+              React.createElement('input', {
+                type: 'range',
+                min: '1',
+                max: '90',
+                value: jobFilters.maxJobAgeInDays,
+                onChange: (e) => setJobFilters({ ...jobFilters, maxJobAgeInDays: parseInt(e.target.value) }),
+                className: 'w-full cursor-pointer',
+                disabled: settingsLoading
+              })
+            ),
+            React.createElement('div', null,
+              React.createElement('label', { className: 'block font-medium text-gray-700 mb-2' }, 'Exclude Keywords (comma-separated)'),
+              React.createElement('textarea', {
+                value: jobFilters.excludeKeywords,
+                onChange: (e) => setJobFilters({ ...jobFilters, excludeKeywords: e.target.value }),
+                placeholder: 'e.g., contractor, temporary, part-time',
+                className: 'w-full px-3 py-2 border border-gray-300 rounded',
+                rows: 3,
+                disabled: settingsLoading
+              })
             )
           )
         ),
