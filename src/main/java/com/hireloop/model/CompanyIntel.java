@@ -24,6 +24,9 @@ public class CompanyIntel {
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "scraped_at")
+    private LocalDateTime scrapedAt;
+
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
 
@@ -41,4 +44,7 @@ public class CompanyIntel {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getScrapedAt() { return scrapedAt; }
+    public void setScrapedAt(LocalDateTime scrapedAt) { this.scrapedAt = scrapedAt; }
 }

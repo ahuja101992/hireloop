@@ -208,4 +208,22 @@ public class ResumeParserService {
                 .findFirst()
                 .orElse(null);
     }
+
+    public void parseAndStore(String resumePath) {
+        try {
+            // Parse the resume
+            Map<String, Object> resumeJson = parseDocxResume(resumePath);
+
+            // Store it
+            ResumeMaster resumeMaster = new ResumeMaster();
+            resumeMaster.setUserId(1); // Default user
+            resumeMaster.setResumeJson(objectMapper.writeValueAsString(resumeJson));
+            resumeMaster.setUpdatedAt(LocalDateTime.now());
+
+            resumeMasterRepository.save(resumeMaster);
+            System.out.println("Resume parsed and stored successfully");
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse and store resume: " + e.getMessage(), e);
+        }
+    }
 }

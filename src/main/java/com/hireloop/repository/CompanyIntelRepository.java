@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CompanyIntelRepository extends JpaRepository<CompanyIntel, Integer> {
     List<CompanyIntel> findByCompanyName(String companyName);
     Optional<CompanyIntel> findByCompanyNameAndSource(String companyName, String source);
+    Optional<CompanyIntel> findFirstByCompanyName(String companyName);
 }

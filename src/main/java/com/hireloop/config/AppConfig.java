@@ -17,6 +17,12 @@ import java.util.List;
 public class AppConfig {
     private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
 
+    private static TargetsConfig targets;
+
+    public TargetsConfig getTargets() {
+        return targets;
+    }
+
     @Bean
     public TargetsConfig targetsConfig() {
         try {
@@ -24,6 +30,7 @@ public class AppConfig {
             ClassPathResource resource = new ClassPathResource("config/targets.yml");
             TargetsConfig config = mapper.readValue(resource.getInputStream(), TargetsConfig.class);
             logger.info("Loaded {} target companies from targets.yml", config.getCompanies().size());
+            targets = config;
             return config;
         } catch (IOException e) {
             logger.error("Error loading targets.yml", e);

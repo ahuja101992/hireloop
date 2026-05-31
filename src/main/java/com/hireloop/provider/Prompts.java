@@ -47,7 +47,7 @@ public class Prompts {
 
     public static String extractIntelPrompt(String rawText) {
         return String.format("""
-            You are an interview intelligence analyst. Extract structured interview process information.
+            You are an interview intelligence analyst. Extract structured interview process information for Principal/Staff SWE interviews.
 
             Raw Data:
             %s
@@ -57,36 +57,41 @@ public class Prompts {
             {
               "rounds": [
                 {
-                  "round_number": <number>,
                   "name": "<round name>",
-                  "duration_minutes": <number>,
-                  "topics": [<topics covered>],
+                  "format": "<phone|video|onsite>",
+                  "topics": ["<topic1>", "<topic2>"],
                   "difficulty": "<easy|medium|hard>"
                 }
               ],
-              "key_topics": [<list of important topics>],
-              "estimated_total_duration": "<estimated total interview duration>"
+              "topic_frequencies": [
+                {
+                  "topic": "<topic name>",
+                  "category": "DSA|SYSTEM_DESIGN|BEHAVIORAL",
+                  "frequency": <0.0-1.0>
+                }
+              ]
             }
             ```
             """, rawText);
     }
 
-    public static String generateBriefPrompt(String companyName, String topicsJson) {
+    public static String generateBriefPrompt(String companyName, String intelJson) {
         return String.format("""
-            You are a company brief generator. Create a concise interview preparation brief.
+            You are a company interview brief generator. Generate interview prep guidance for a Principal/Staff SWE candidate.
 
             Company: %s
-            Topics to Cover: %s
+            Interview Intel: %s
 
             Respond with ONLY a JSON object in a code block (no other text). Return exactly this format:
             ```json
             {
-              "company_overview": "<brief company background>",
-              "interview_focus": [<key topics they care about>],
-              "preparation_tips": [<specific tips for this company>],
-              "common_questions": [<typical questions asked>]
+              "rounds": ["<round description>"],
+              "interview_tips": ["<tip 1>", "<tip 2>"],
+              "suggested_lc_problems": ["<problem name or link>"],
+              "system_design_cases": ["<case name>"],
+              "behavioral_focus": ["<focus area>"]
             }
             ```
-            """, companyName, topicsJson);
+            """, companyName, intelJson);
     }
 }
