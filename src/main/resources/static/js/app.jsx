@@ -4,12 +4,16 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showSettings, setShowSettings] = useState(false);
   const [autoApplySettings, setAutoApplySettings] = useState({ enabled: false, headless: true });
+  const [resumeStatus, setResumeStatus] = useState({ exists: false, size: 0 });
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
+  const [resumeUploading, setResumeUploading] = useState(false);
+  const [resumeUploaded, setResumeUploaded] = useState(false);
 
   useEffect(() => {
     if (showSettings) {
       loadSettings();
+      loadResumeStatus();
     }
   }, [showSettings]);
 
@@ -42,6 +46,43 @@ function App() {
       console.error('Failed to save settings:', error);
     } finally {
       setSettingsLoading(false);
+    }
+  };
+
+  const loadResumeStatus = async () => {
+    try {
+      const response = await fetch('/api/resume/status');
+      const data = await response.json();
+      setResumeStatus(data);
+    } catch (error) {
+      console.error('Failed to load resume status:', error);
+    }
+  };
+
+  const handleResumeUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      setResumeUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/resume/upload', {
+        method: 'POST',
+        body: formData
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setResumeUploaded(true);
+        await loadResumeStatus();
+        setTimeout(() => setResumeUploaded(false), 3000);
+      }
+    } catch (error) {
+      console.error('Failed to upload resume:', error);
+    } finally {
+      setResumeUploading(false);
     }
   };
 
@@ -163,6 +204,39 @@ function App() {
                 className: 'w-5 h-5 cursor-pointer',
                 disabled: settingsLoading
               })
+            )
+          )
+        ),
+
+        // Resume Upload Section
+        React.createElement('div', { className: 'mb-8 pb-8 border-b' },
+          React.createElement('h3', { className: 'text-lg font-semibold mb-4' }, 'Resume'),
+          React.createElement('div', { className: 'space-y-4' },
+            React.createElement('div', null,
+              resumeStatus.exists && React.createElement('div', { className: 'mb-4 p-3 bg-blue-100 text-blue-800 rounded' },
+                '✓ Resume uploaded: ' + (resumeStatus.size / 1024).toFixed(1) + ' KB'
+              ),
+              !resumeStatus.exists && React.createElement('div', { className: 'mb-4 p-3 bg-yellow-100 text-yellow-800 rounded' },
+                '⚠️ No resume uploaded'
+              )
+            ),
+            React.createElement('div', null,
+              React.createElement('input', {
+                type: 'file',
+                id: 'resume-upload',
+                onChange: handleResumeUpload,
+                disabled: resumeUploading,
+                className: 'hidden',
+                accept: '.pdf,.doc,.docx'
+              }),
+              React.createElement('button', {
+                onClick: () => document.getElementById('resume-upload').click(),
+                className: 'w-full px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded font-medium cursor-pointer disabled:opacity-50',
+                disabled: resumeUploading
+              }, resumeUploading ? 'Uploading...' : 'Upload Resume')
+            ),
+            resumeUploaded && React.createElement('div', { className: 'p-3 bg-green-100 text-green-800 rounded' },
+              '✓ Resume uploaded successfully'
             )
           )
         ),
