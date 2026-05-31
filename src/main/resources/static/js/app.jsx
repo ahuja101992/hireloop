@@ -4,6 +4,12 @@ function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showSettings, setShowSettings] = useState(false);
   const [autoApplySettings, setAutoApplySettings] = useState({ enabled: false, headless: true });
+  const [emailPreferences, setEmailPreferences] = useState({
+    notifyNewJobs: true,
+    notifyResumeChanges: true,
+    notifyApplications: true,
+    digestFrequency: 'immediate'
+  });
   const [resumeStatus, setResumeStatus] = useState({ exists: false, size: 0 });
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
@@ -20,9 +26,13 @@ function App() {
   const loadSettings = async () => {
     try {
       setSettingsLoading(true);
-      const response = await fetch('/api/config/apply-engine');
-      const data = await response.json();
-      setAutoApplySettings(data);
+      const applyResponse = await fetch('/api/config/apply-engine');
+      const applyData = await applyResponse.json();
+      setAutoApplySettings(applyData);
+
+      const emailResponse = await fetch('/api/config/email-preferences');
+      const emailData = await emailResponse.json();
+      setEmailPreferences(emailData);
     } catch (error) {
       console.error('Failed to load settings:', error);
     } finally {
@@ -33,13 +43,22 @@ function App() {
   const saveSettings = async () => {
     try {
       setSettingsLoading(true);
-      const response = await fetch('/api/config/apply-engine', {
+      const applyResponse = await fetch('/api/config/apply-engine', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(autoApplySettings)
       });
-      const data = await response.json();
-      setAutoApplySettings(data);
+      const applyData = await applyResponse.json();
+      setAutoApplySettings(applyData);
+
+      const emailResponse = await fetch('/api/config/email-preferences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(emailPreferences)
+      });
+      const emailData = await emailResponse.json();
+      setEmailPreferences(emailData);
+
       setSettingsSaved(true);
       setTimeout(() => setSettingsSaved(false), 3000);
     } catch (error) {
@@ -237,6 +256,56 @@ function App() {
             ),
             resumeUploaded && React.createElement('div', { className: 'p-3 bg-green-100 text-green-800 rounded' },
               '✓ Resume uploaded successfully'
+            )
+          )
+        ),
+
+        // Email Preferences Section
+        React.createElement('div', { className: 'mb-8 pb-8 border-b' },
+          React.createElement('h3', { className: 'text-lg font-semibold mb-4' }, 'Email Notifications'),
+          React.createElement('div', { className: 'space-y-4' },
+            React.createElement('div', { className: 'flex items-center justify-between' },
+              React.createElement('label', { className: 'font-medium text-gray-700' }, 'New Jobs'),
+              React.createElement('input', {
+                type: 'checkbox',
+                checked: emailPreferences.notifyNewJobs,
+                onChange: (e) => setEmailPreferences({ ...emailPreferences, notifyNewJobs: e.target.checked }),
+                className: 'w-5 h-5 cursor-pointer',
+                disabled: settingsLoading
+              })
+            ),
+            React.createElement('div', { className: 'flex items-center justify-between' },
+              React.createElement('label', { className: 'font-medium text-gray-700' }, 'Resume Changes'),
+              React.createElement('input', {
+                type: 'checkbox',
+                checked: emailPreferences.notifyResumeChanges,
+                onChange: (e) => setEmailPreferences({ ...emailPreferences, notifyResumeChanges: e.target.checked }),
+                className: 'w-5 h-5 cursor-pointer',
+                disabled: settingsLoading
+              })
+            ),
+            React.createElement('div', { className: 'flex items-center justify-between' },
+              React.createElement('label', { className: 'font-medium text-gray-700' }, 'Application Status'),
+              React.createElement('input', {
+                type: 'checkbox',
+                checked: emailPreferences.notifyApplications,
+                onChange: (e) => setEmailPreferences({ ...emailPreferences, notifyApplications: e.target.checked }),
+                className: 'w-5 h-5 cursor-pointer',
+                disabled: settingsLoading
+              })
+            ),
+            React.createElement('div', null,
+              React.createElement('label', { className: 'block font-medium text-gray-700 mb-2' }, 'Notification Frequency'),
+              React.createElement('select', {
+                value: emailPreferences.digestFrequency,
+                onChange: (e) => setEmailPreferences({ ...emailPreferences, digestFrequency: e.target.value }),
+                className: 'w-full px-3 py-2 border border-gray-300 rounded',
+                disabled: settingsLoading
+              },
+                React.createElement('option', { value: 'immediate' }, 'Immediate'),
+                React.createElement('option', { value: 'daily' }, 'Daily Digest'),
+                React.createElement('option', { value: 'weekly' }, 'Weekly Digest')
+              )
             )
           )
         ),

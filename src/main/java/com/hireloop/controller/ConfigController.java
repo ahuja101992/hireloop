@@ -20,6 +20,12 @@ public class ConfigController {
     public ConfigController() {
         runtimeConfig.put("autoApplyEnabled", false);
         runtimeConfig.put("headlessMode", true);
+        runtimeConfig.put("emailPreferences", Map.of(
+            "notifyNewJobs", true,
+            "notifyResumeChanges", true,
+            "notifyApplications", true,
+            "digestFrequency", "immediate"
+        ));
     }
 
     @GetMapping
@@ -59,5 +65,21 @@ public class ConfigController {
     public Map<String, Object> updateTargets(@RequestBody Map<String, Object> targets) {
         runtimeConfig.put("targets", targets);
         return targets;
+    }
+
+    @GetMapping("/email-preferences")
+    public Map<String, Object> getEmailPreferences() {
+        return (Map<String, Object>) runtimeConfig.getOrDefault("emailPreferences", Map.of(
+            "notifyNewJobs", true,
+            "notifyResumeChanges", true,
+            "notifyApplications", true,
+            "digestFrequency", "immediate"
+        ));
+    }
+
+    @PostMapping("/email-preferences")
+    public Map<String, Object> updateEmailPreferences(@RequestBody Map<String, Object> preferences) {
+        runtimeConfig.put("emailPreferences", preferences);
+        return getEmailPreferences();
     }
 }
