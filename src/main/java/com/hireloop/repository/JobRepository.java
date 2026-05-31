@@ -10,4 +10,5 @@ import java.util.List;
 public interface JobRepository extends JpaRepository<Job, Integer> {
     List<Job> findByCompanyName(String companyName);
     List<Job> findByStatus(String status);
+    List<Job> findByCompanyNameAndTitle(String companyName, String title);
 }
