@@ -1,12 +1,53 @@
-const { useState } = React;
+const { useState, useEffect } = React;
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [showSettings, setShowSettings] = useState(false);
+  const [autoApplySettings, setAutoApplySettings] = useState({ enabled: false, headless: true });
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsSaved, setSettingsSaved] = useState(false);
+
+  useEffect(() => {
+    if (showSettings) {
+      loadSettings();
+    }
+  }, [showSettings]);
+
+  const loadSettings = async () => {
+    try {
+      setSettingsLoading(true);
+      const response = await fetch('/api/config/apply-engine');
+      const data = await response.json();
+      setAutoApplySettings(data);
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
+
+  const saveSettings = async () => {
+    try {
+      setSettingsLoading(true);
+      const response = await fetch('/api/config/apply-engine', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(autoApplySettings)
+      });
+      const data = await response.json();
+      setAutoApplySettings(data);
+      setSettingsSaved(true);
+      setTimeout(() => setSettingsSaved(false), 3000);
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+    } finally {
+      setSettingsLoading(false);
+    }
+  };
 
   const tabClass = (tab) => activeTab === tab
-    ? 'py-4 px-2 border-b-2 font-medium text-sm border-blue-500 text-blue-600'
-    : 'py-4 px-2 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700';
+    ? 'py-4 px-2 border-b-2 font-medium text-sm border-blue-500 text-blue-600 cursor-pointer'
+    : 'py-4 px-2 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 cursor-pointer';
 
   const renderContent = () => {
     switch(activeTab) {
@@ -58,7 +99,7 @@ function App() {
         React.createElement('h1', { className: 'text-3xl font-bold text-blue-600' }, 'HireLoop'),
         React.createElement('button', {
           onClick: () => setShowSettings(true),
-          className: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
+          className: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer'
         }, '⚙️ Settings')
       )
     ),
@@ -87,14 +128,63 @@ function App() {
     React.createElement('main', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8' },
       renderContent()
     ),
-    showSettings && React.createElement('div', { className: 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center' },
-      React.createElement('div', { className: 'bg-white rounded-lg p-8 max-w-md w-full' },
-        React.createElement('h2', { className: 'text-2xl font-bold mb-4' }, 'Settings'),
-        React.createElement('p', { className: 'text-gray-600 mb-6' }, 'Settings panel coming soon'),
-        React.createElement('button', {
-          onClick: () => setShowSettings(false),
-          className: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-        }, 'Close')
+    showSettings && React.createElement('div', { className: 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50' },
+      React.createElement('div', { className: 'bg-white rounded-lg p-8 max-w-2xl w-full max-h-screen overflow-y-auto' },
+        React.createElement('h2', { className: 'text-2xl font-bold mb-6' }, 'Settings'),
+
+        // Auto-Apply Settings Section
+        React.createElement('div', { className: 'mb-8 pb-8 border-b' },
+          React.createElement('h3', { className: 'text-lg font-semibold mb-4' }, 'Auto-Apply Engine'),
+          React.createElement('div', { className: 'space-y-4' },
+            // Enable Toggle
+            React.createElement('div', { className: 'flex items-center justify-between' },
+              React.createElement('div', null,
+                React.createElement('label', { className: 'block font-medium text-gray-700' }, 'Enable Auto-Apply'),
+                React.createElement('p', { className: 'text-sm text-gray-500' }, 'Automatically apply to matching jobs')
+              ),
+              React.createElement('input', {
+                type: 'checkbox',
+                checked: autoApplySettings.enabled,
+                onChange: (e) => setAutoApplySettings({ ...autoApplySettings, enabled: e.target.checked }),
+                className: 'w-5 h-5 cursor-pointer',
+                disabled: settingsLoading
+              })
+            ),
+            // Headless Mode Toggle
+            React.createElement('div', { className: 'flex items-center justify-between' },
+              React.createElement('div', null,
+                React.createElement('label', { className: 'block font-medium text-gray-700' }, 'Headless Mode'),
+                React.createElement('p', { className: 'text-sm text-gray-500' }, 'Run browser in background (no visual window)')
+              ),
+              React.createElement('input', {
+                type: 'checkbox',
+                checked: autoApplySettings.headless,
+                onChange: (e) => setAutoApplySettings({ ...autoApplySettings, headless: e.target.checked }),
+                className: 'w-5 h-5 cursor-pointer',
+                disabled: settingsLoading
+              })
+            )
+          )
+        ),
+
+        // Status Message
+        settingsSaved && React.createElement('div', { className: 'mb-4 p-3 bg-green-100 text-green-800 rounded' },
+          '✓ Settings saved successfully'
+        ),
+
+        // Action Buttons
+        React.createElement('div', { className: 'flex justify-end space-x-3' },
+          React.createElement('button', {
+            onClick: () => setShowSettings(false),
+            className: 'px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded font-medium cursor-pointer',
+            disabled: settingsLoading
+          }, 'Close'),
+          React.createElement('button', {
+            onClick: saveSettings,
+            className: 'px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded font-medium cursor-pointer disabled:opacity-50',
+            disabled: settingsLoading
+          }, settingsLoading ? 'Saving...' : 'Save Settings')
+        )
       )
     )
   );
