@@ -53,6 +53,38 @@ public class ClaudeProvider implements LlmProvider {
         return callClaude(prompt);
     }
 
+    private String extractJsonFromResponse(String text) {
+        String jsonText = text.trim();
+
+        // Try to find JSON within markdown code blocks
+        if (jsonText.contains("```json")) {
+            int startIdx = jsonText.indexOf("```json") + 7;
+            int endIdx = jsonText.indexOf("```", startIdx);
+            if (endIdx > startIdx) {
+                return jsonText.substring(startIdx, endIdx).trim();
+            }
+        } else if (jsonText.contains("```")) {
+            int startIdx = jsonText.indexOf("```") + 3;
+            int endIdx = jsonText.indexOf("```", startIdx);
+            if (endIdx > startIdx) {
+                return jsonText.substring(startIdx, endIdx).trim();
+            }
+        }
+
+        // If no code blocks found, try to find JSON object directly
+        // Look for the first { and last } to extract potential JSON
+        int startIdx = jsonText.indexOf('{');
+        if (startIdx >= 0) {
+            int endIdx = jsonText.lastIndexOf('}');
+            if (endIdx > startIdx) {
+                return jsonText.substring(startIdx, endIdx + 1).trim();
+            }
+        }
+
+        // If no JSON found, return original text (will fail parsing with proper error)
+        return jsonText;
+    }
+
     private JsonNode callClaude(String prompt) {
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -78,8 +110,11 @@ public class ClaudeProvider implements LlmProvider {
             // Extract text from Claude's response format
             String text = responseNode.get("content").get(0).get("text").asText();
 
+            // Handle markdown-wrapped JSON responses and extract JSON
+            String jsonText = extractJsonFromResponse(text);
+
             // Parse the JSON from the response
-            return objectMapper.readTree(text);
+            return objectMapper.readTree(jsonText);
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Error processing JSON response from Claude", e);
         } catch (Exception e) {

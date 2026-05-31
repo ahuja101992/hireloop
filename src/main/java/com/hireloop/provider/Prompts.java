@@ -11,13 +11,15 @@ public class Prompts {
             Job Description:
             %s
 
-            Respond with a JSON object containing:
+            Respond with ONLY a JSON object in a code block (no other text). Return exactly this format:
+            ```json
             {
               "fit_score": <0-100 number>,
               "key_matches": [<list of matching skills/experiences>],
               "gaps": [<list of missing skills/experiences>],
               "recommendation": "<brief recommendation>"
             }
+            ```
             """, resume, jobDescription);
     }
 
@@ -31,13 +33,15 @@ public class Prompts {
             Target Job:
             %s
 
-            Respond with a JSON object containing:
+            Respond with ONLY a JSON object in a code block (no other text). Return exactly this format:
+            ```json
             {
               "tailored_summary": "<adapted professional summary>",
               "highlighted_skills": [<list of skills to highlight>],
               "relevant_experiences": [<list of relevant work experiences with keyword alignment>],
               "recommended_additions": [<suggested projects or skills to mention>]
             }
+            ```
             """, resume, jobDescription);
     }
 
@@ -48,7 +52,8 @@ public class Prompts {
             Raw Data:
             %s
 
-            Respond with a JSON object containing:
+            Respond with ONLY a JSON object in a code block (no other text). Return exactly this format:
+            ```json
             {
               "rounds": [
                 {
@@ -62,6 +67,7 @@ public class Prompts {
               "key_topics": [<list of important topics>],
               "estimated_total_duration": "<estimated total interview duration>"
             }
+            ```
             """, rawText);
     }
 
@@ -72,13 +78,15 @@ public class Prompts {
             Company: %s
             Topics to Cover: %s
 
-            Respond with a JSON object containing:
+            Respond with ONLY a JSON object in a code block (no other text). Return exactly this format:
+            ```json
             {
               "company_overview": "<brief company background>",
               "interview_focus": [<key topics they care about>],
               "preparation_tips": [<specific tips for this company>],
               "common_questions": [<typical questions asked>]
             }
+            ```
             """, companyName, topicsJson);
     }
 }

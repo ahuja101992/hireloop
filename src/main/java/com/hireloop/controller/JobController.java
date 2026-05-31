@@ -39,8 +39,8 @@ public class JobController {
     @PostMapping("/{id}/score")
     public void scoreJob(
             @PathVariable Integer id,
-            @RequestBody String resume) {
-        fitScorerService.scoreJob(id, resume);
+            @RequestBody ScoreJobRequest request) {
+        fitScorerService.scoreJob(id, request.getResume());
     }
 
     @PostMapping("/{id}/confirm-apply")

@@ -43,13 +43,25 @@
 - ✅ Unit tests passing
 - ✅ Git repository initialized with initial commit
 
+## Recently Completed (Step 3 Enhanced)
+
+- ✅ Fixed Claude API JSON response parsing to handle markdown code blocks
+- ✅ Updated all prompts to explicitly request JSON in code blocks
+- ✅ Improved response extraction logic with fallback JSON object detection
+- ✅ Created ScoreJobRequest DTO for proper request handling
+- ✅ End-to-end test with real Claude API integration
+  - Job created with company name "Google" and position "Senior Backend Engineer - Payments"
+  - Claude API scored the job with fit score of 92/100
+  - All data properly persisted in PostgreSQL
+  - Confirmed job scoring, status changes, and data integrity
+
 ## Next Steps
 
 - Phase 4: Implement ApplyEngine with ATS integration (requires user confirmation)
 - Phase 5-24: Continue with remaining phased delivery steps
 - Configure Gmail API for application tracking
 - Implement Playwright browser automation for web scraping
-- Integrate Claude API for resume adaptation and job scoring
+- Enhance resume adaptation with tailored resume generation
 
 ## Configuration
 
