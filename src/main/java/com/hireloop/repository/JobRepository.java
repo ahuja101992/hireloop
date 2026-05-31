@@ -9,6 +9,7 @@ import java.util.List;
 @Repository
 public interface JobRepository extends JpaRepository<Job, Integer> {
     List<Job> findByCompanyName(String companyName);
+    List<Job> findByCompanyNameContainingIgnoreCase(String companyNamePart);
     List<Job> findByStatus(String status);
     List<Job> findByCompanyNameAndTitle(String companyName, String title);
 }
