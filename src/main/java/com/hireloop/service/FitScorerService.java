@@ -6,6 +6,7 @@ import com.hireloop.model.Job;
 import com.hireloop.provider.LlmProvider;
 import com.hireloop.provider.LlmProviderFactory;
 import com.hireloop.repository.JobRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,13 +15,19 @@ import java.time.LocalDateTime;
 public class FitScorerService {
     private final JobRepository jobRepository;
     private final LlmProviderFactory llmProviderFactory;
+    private final NotificationService notificationService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Value("${gmail.user-email}")
+    private String userEmail;
 
     public FitScorerService(
             JobRepository jobRepository,
-            LlmProviderFactory llmProviderFactory) {
+            LlmProviderFactory llmProviderFactory,
+            NotificationService notificationService) {
         this.jobRepository = jobRepository;
         this.llmProviderFactory = llmProviderFactory;
+        this.notificationService = notificationService;
     }
 
     public void scoreJob(Integer jobId, String resume) {
@@ -37,6 +44,9 @@ public class FitScorerService {
         job.setUpdatedAt(LocalDateTime.now());
 
         jobRepository.save(job);
+
+        // Send email notification to user
+        notificationService.notifyNewJob(job, userEmail);
     }
 
     public void scoreAllJobs(String resume) {

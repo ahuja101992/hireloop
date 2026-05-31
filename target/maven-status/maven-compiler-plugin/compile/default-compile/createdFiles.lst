@@ -18,6 +18,7 @@ com/hireloop/model/TopicUniverse.class
 com/hireloop/repository/TopicCoverageRepository.class
 com/hireloop/provider/LlmProviderFactory.class
 com/hireloop/model/Job.class
+com/hireloop/controller/ScoreJobRequest.class
 com/hireloop/service/JobPollerService.class
 com/hireloop/model/ResumeMaster.class
 com/hireloop/repository/TopicUniverseRepository.class

@@ -21,16 +21,29 @@ spring:
   flyway:
     enabled: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${GMAIL_ADDRESS}
+    password: ${GMAIL_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
 llm:
   provider: claude
   claude:
     api-key: ${CLAUDE_API_KEY}
-    model: claude-3-5-sonnet-20241022
+    model: claude-sonnet-4-6
 
 gmail:
-  enabled: false
-  service-account-key-path: ${GMAIL_KEY_PATH}
-  user-email: ${GMAIL_USER_EMAIL}
+  enabled: true
+  service-account-key-path: ${GMAIL_OAUTH_CREDENTIALS}
+  user-email: ${GMAIL_ADDRESS}
 
 logging:
   level:
