@@ -133,6 +133,56 @@ public class NotificationService {
         }
     }
 
+    public void notifyApplicationSubmitted(Job job, String recipientEmail) {
+        if (mailSender.isEmpty()) {
+            System.out.println("[NOTIFY] Application submitted: " + job.getCompanyName() + " - " + job.getTitle());
+            return;
+        }
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(recipientEmail);
+            message.setSubject("✅ Application Submitted: " + job.getCompanyName() + " - " + job.getTitle());
+            message.setText(String.format("""
+                    Your application has been submitted!
+
+                    Company: %s
+                    Position: %s
+                    Fit Score: %s
+                    Job URL: %s
+
+                    Track your application in the HireLoop dashboard.
+                    """, job.getCompanyName(), job.getTitle(), job.getFitScore(), job.getJdUrl()));
+            mailSender.get().send(message);
+        } catch (Exception e) {
+            System.err.println("Error sending submission confirmation: " + e.getMessage());
+        }
+    }
+
+    public void notifyApplyFailed(Job job, String errorMessage, String recipientEmail) {
+        if (mailSender.isEmpty()) {
+            System.out.println("[NOTIFY] Apply failed: " + job.getCompanyName() + " - " + errorMessage);
+            return;
+        }
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(recipientEmail);
+            message.setSubject("⚠️ Manual Apply Needed: " + job.getCompanyName() + " - " + job.getTitle());
+            message.setText(String.format("""
+                    HireLoop could not auto-submit your application. Please apply manually.
+
+                    Company: %s
+                    Position: %s
+                    Fit Score: %s
+                    Job URL: %s
+
+                    Reason: %s
+                    """, job.getCompanyName(), job.getTitle(), job.getFitScore(), job.getJdUrl(), errorMessage));
+            mailSender.get().send(message);
+        } catch (Exception e) {
+            System.err.println("Error sending failure notification: " + e.getMessage());
+        }
+    }
+
     public List<ResumeChangeNotification> getDigestQueue() {
         return new ArrayList<>(digestQueue);
     }

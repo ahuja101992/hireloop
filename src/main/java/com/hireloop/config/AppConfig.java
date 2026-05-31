@@ -2,6 +2,8 @@ package com.hireloop.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,23 +57,29 @@ public class AppConfig {
     }
 
     @Data
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class TargetsConfig {
         private List<Company> companies = new ArrayList<>();
+        private List<String> intelSources = new ArrayList<>();
 
         public List<Company> getCompanies() {
             return companies;
         }
 
+        public List<String> getIntelSources() {
+            return intelSources;
+        }
+
         @Data
+        @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
         public static class Company {
             private String name;
             private String ats;
-            private String careers_url;
-            private String api_url;
+            private String careersUrl;
+            private String apiUrl;
             private String priority;
-            private Integer apply_readiness_threshold;
+            private Integer applyReadinessThreshold;
 
-            // Getters for camelCase access
             public String getName() {
                 return name;
             }
@@ -81,11 +89,11 @@ public class AppConfig {
             }
 
             public String getCareersUrl() {
-                return careers_url;
+                return careersUrl;
             }
 
             public String getApiUrl() {
-                return api_url;
+                return apiUrl;
             }
 
             public String getPriority() {
@@ -93,38 +101,38 @@ public class AppConfig {
             }
 
             public Integer getApplyReadinessThreshold() {
-                return apply_readiness_threshold;
+                return applyReadinessThreshold;
             }
         }
     }
 
     @Data
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public static class FiltersConfig {
-        private Integer max_age_days;
-        private Integer min_fit_score;
-        private Boolean require_direct_apply;
-        private List<String> target_levels = new ArrayList<>();
+        private Integer maxAgeDays;
+        private Integer minFitScore;
+        private Boolean requireDirectApply;
+        private List<String> targetLevels = new ArrayList<>();
         private List<String> locations = new ArrayList<>();
-        private Integer salary_min;
-        private List<String> exclude_keywords = new ArrayList<>();
-        private List<String> require_keywords = new ArrayList<>();
-        private Integer apply_readiness_threshold_default;
+        private Integer salaryMin;
+        private List<String> excludeKeywords = new ArrayList<>();
+        private List<String> requireKeywords = new ArrayList<>();
+        private Integer applyReadinessThresholdDefault;
 
-        // Getters for camelCase names for consistency with service code
         public Integer getMaxAgeDays() {
-            return max_age_days;
+            return maxAgeDays;
         }
 
         public Integer getMinFitScore() {
-            return min_fit_score;
+            return minFitScore;
         }
 
         public Boolean getRequireDirectApply() {
-            return require_direct_apply;
+            return requireDirectApply;
         }
 
         public List<String> getTargetLevels() {
-            return target_levels;
+            return targetLevels;
         }
 
         public List<String> getLocations() {
@@ -132,19 +140,19 @@ public class AppConfig {
         }
 
         public Integer getSalaryMin() {
-            return salary_min;
+            return salaryMin;
         }
 
         public List<String> getExcludeKeywords() {
-            return exclude_keywords;
+            return excludeKeywords;
         }
 
         public List<String> getRequireKeywords() {
-            return require_keywords;
+            return requireKeywords;
         }
 
         public Integer getApplyReadinessThresholdDefault() {
-            return apply_readiness_threshold_default;
+            return applyReadinessThresholdDefault;
         }
     }
 

@@ -45,6 +45,14 @@ gmail:
   service-account-key-path: ${GMAIL_OAUTH_CREDENTIALS}
   user-email: ${GMAIL_ADDRESS}
 
+apply-engine:
+  enabled: false
+  headless: true
+  user-name: ${USER_NAME:Akshita Huja}
+  user-email: ${GMAIL_ADDRESS:}
+  user-phone: ${USER_PHONE:}
+  resume-path: resume/resume.docx
+
 logging:
   level:
     root: INFO

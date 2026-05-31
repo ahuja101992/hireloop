@@ -25,7 +25,8 @@ public class HireLoopApplication {
             IntelScrapeService intelScrapeService,
             TopicCoverageService topicCoverageService,
             ReadinessReportService readinessReportService,
-            BriefService briefService) {
+            BriefService briefService,
+            ApplyEngineService applyEngineService) {
         return args -> {
             if (args.containsOption("load-resume")) {
                 handleLoadResume(resumeParserService);
@@ -45,6 +46,14 @@ public class HireLoopApplication {
 
             if (args.containsOption("brief")) {
                 handleBrief(args, briefService);
+            }
+
+            if (args.containsOption("apply")) {
+                handleApply(args, applyEngineService);
+            }
+
+            if (args.containsOption("apply-all")) {
+                handleApplyAll(applyEngineService);
             }
         };
     }
@@ -78,8 +87,6 @@ public class HireLoopApplication {
                 String topic = topicValues.get(0);
                 String status = topicValues.get(1);
                 String notes = topicValues.get(2);
-
-                // Find topic by name and update
                 log.info("Updating topic: {} to status: {}", topic, status);
                 System.out.println(String.format("Updated topic '%s' to %s", topic, status));
             } else {
@@ -116,6 +123,41 @@ public class HireLoopApplication {
             }
         } catch (Exception e) {
             log.error("Error generating brief", e);
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void handleApply(ApplicationArguments args, ApplyEngineService applyEngineService) {
+        try {
+            var applyValues = args.getOptionValues("apply");
+            if (applyValues != null && !applyValues.isEmpty()) {
+                Integer jobId = Integer.parseInt(applyValues.get(0));
+                log.info("Applying to job: {}", jobId);
+                var result = applyEngineService.applyToJob(jobId);
+                System.out.println(result.isSuccess()
+                    ? "✓ Applied to " + result.getCompanyName() + " (appId=" + result.getApplicationId() + ")"
+                    : "✗ Apply failed: " + result.getErrorMessage());
+            } else {
+                System.err.println("Usage: --apply [jobId]");
+            }
+        } catch (Exception e) {
+            log.error("Error applying to job", e);
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+
+    private void handleApplyAll(ApplyEngineService applyEngineService) {
+        try {
+            log.info("Starting batch apply for all confirmed jobs");
+            var results = applyEngineService.applyBatch();
+            long succeeded = results.stream().filter(r -> r.isSuccess()).count();
+            System.out.println(String.format("Batch apply complete: %d/%d succeeded", succeeded, results.size()));
+            results.forEach(r -> System.out.println(
+                (r.isSuccess() ? "  ✓ " : "  ✗ ") + r.getCompanyName() + ": " +
+                (r.isSuccess() ? "Applied" : r.getErrorMessage())
+            ));
+        } catch (Exception e) {
+            log.error("Error in batch apply", e);
             System.err.println("Error: " + e.getMessage());
         }
     }

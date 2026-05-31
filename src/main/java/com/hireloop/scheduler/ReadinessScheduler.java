@@ -20,7 +20,7 @@ public class ReadinessScheduler {
         this.readinessReportService = readinessReportService;
     }
 
-    @Scheduled(cron = "0 9 * * MON")
+    @Scheduled(cron = "0 0 9 * * MON")
     public void sendWeeklyReadinessReport() {
         log.info("Generating weekly readiness report...");
         try {
