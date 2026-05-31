@@ -1,0 +1,275 @@
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2026-05-30T19:45:43.112-05:00  INFO 12559 --- [hireloop] [           main] com.hireloop.HireLoopApplication         : Starting HireLoopApplication v1.0.0 using Java 17.0.17 with PID 12559 (/Users/akshitahuja/IdeaProjects/hireloop/target/hireloop-1.0.0.jar started by akshitahuja in /Users/akshitahuja/IdeaProjects/hireloop)
+2026-05-30T19:45:43.132-05:00 DEBUG 12559 --- [hireloop] [           main] com.hireloop.HireLoopApplication         : Running with Spring Boot v3.3.0, Spring v6.1.8
+2026-05-30T19:45:43.133-05:00  INFO 12559 --- [hireloop] [           main] com.hireloop.HireLoopApplication         : No active profile set, falling back to 1 default profile: "default"
+2026-05-30T19:45:44.622-05:00  INFO 12559 --- [hireloop] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-30T19:45:44.745-05:00  INFO 12559 --- [hireloop] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 111 ms. Found 8 JPA repository interfaces.
+2026-05-30T19:45:45.556-05:00  INFO 12559 --- [hireloop] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-05-30T19:45:45.578-05:00  INFO 12559 --- [hireloop] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-30T19:45:45.578-05:00  INFO 12559 --- [hireloop] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.24]
+2026-05-30T19:45:45.625-05:00  INFO 12559 --- [hireloop] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-30T19:45:45.626-05:00  INFO 12559 --- [hireloop] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2283 ms
+2026-05-30T19:45:45.848-05:00  INFO 12559 --- [hireloop] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-30T19:45:45.937-05:00  INFO 12559 --- [hireloop] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2026-05-30T19:45:45.989-05:00  INFO 12559 --- [hireloop] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-30T19:45:46.456-05:00  INFO 12559 --- [hireloop] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-30T19:45:46.491-05:00  INFO 12559 --- [hireloop] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-30T19:45:46.649-05:00  INFO 12559 --- [hireloop] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@351e89fc
+2026-05-30T19:45:46.651-05:00  INFO 12559 --- [hireloop] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-30T19:45:46.701-05:00  WARN 12559 --- [hireloop] [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-30T19:45:48.176-05:00  INFO 12559 --- [hireloop] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-30T19:45:48.207-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    alter table if exists hireloop.application 
+       drop constraint if exists FKls6sryk64ga8o5t4bym8qu3vm
+2026-05-30T19:45:48.291-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.293-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : relation "application" does not exist, skipping
+2026-05-30T19:45:48.294-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    alter table if exists hireloop.company_topic_frequency 
+       drop constraint if exists FKbjq3c3dv77g9qj54jydqe684k
+2026-05-30T19:45:48.295-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.295-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : relation "company_topic_frequency" does not exist, skipping
+2026-05-30T19:45:48.295-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    alter table if exists hireloop.topic_coverage 
+       drop constraint if exists FKlayr8r166p2ffhpkia2ok5vxk
+2026-05-30T19:45:48.296-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.338-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : relation "topic_coverage" does not exist, skipping
+2026-05-30T19:45:48.339-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    drop table if exists hireloop.application cascade
+2026-05-30T19:45:48.589-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.602-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "application" does not exist, skipping
+2026-05-30T19:45:48.607-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    drop table if exists hireloop.company_intel cascade
+2026-05-30T19:45:48.631-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.632-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "company_intel" does not exist, skipping
+2026-05-30T19:45:48.632-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    drop table if exists hireloop.company_topic_frequency cascade
+2026-05-30T19:45:48.635-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.635-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "company_topic_frequency" does not exist, skipping
+2026-05-30T19:45:48.636-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    drop table if exists hireloop.job cascade
+2026-05-30T19:45:48.638-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.638-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "job" does not exist, skipping
+2026-05-30T19:45:48.639-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    drop table if exists hireloop.prep_readiness cascade
+2026-05-30T19:45:48.641-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.641-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "prep_readiness" does not exist, skipping
+2026-05-30T19:45:48.642-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    drop table if exists hireloop.resume_master cascade
+2026-05-30T19:45:48.643-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.644-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "resume_master" does not exist, skipping
+2026-05-30T19:45:48.644-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    drop table if exists hireloop.topic_coverage cascade
+2026-05-30T19:45:48.645-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.646-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "topic_coverage" does not exist, skipping
+2026-05-30T19:45:48.646-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    drop table if exists hireloop.topic_universe cascade
+2026-05-30T19:45:48.647-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : SQL Warning Code: 0, SQLState: 00000
+2026-05-30T19:45:48.647-05:00  WARN 12559 --- [hireloop] [           main] o.h.engine.jdbc.spi.SqlExceptionHelper   : table "topic_universe" does not exist, skipping
+2026-05-30T19:45:48.721-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create table hireloop.application (
+        id integer generated by default as identity,
+        job_id integer,
+        applied_at timestamp(6),
+        updated_at timestamp(6),
+        pipeline_status varchar(255),
+        primary key (id)
+    )
+2026-05-30T19:45:49.412-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create table hireloop.company_intel (
+        id integer generated by default as identity,
+        created_at timestamp(6),
+        company_name varchar(255),
+        interview_rounds TEXT,
+        raw_data TEXT,
+        source varchar(255),
+        primary key (id),
+        unique (company_name, source)
+    )
+2026-05-30T19:45:49.484-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create table hireloop.company_topic_frequency (
+        frequency numeric(38,2),
+        id integer generated by default as identity,
+        topic_id integer,
+        created_at timestamp(6),
+        company_name varchar(255),
+        primary key (id),
+        unique (company_name, topic_id)
+    )
+2026-05-30T19:45:49.547-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create table hireloop.job (
+        confirmed boolean,
+        fit_score numeric(38,2),
+        id integer generated by default as identity,
+        created_at timestamp(6),
+        updated_at timestamp(6),
+        company_name varchar(255),
+        jd_text TEXT,
+        jd_url varchar(255),
+        status varchar(255),
+        tailored_resume_json TEXT,
+        title varchar(255),
+        primary key (id)
+    )
+2026-05-30T19:45:49.578-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create table hireloop.prep_readiness (
+        behavioral_score numeric(38,2),
+        dsa_score numeric(38,2),
+        id integer generated by default as identity,
+        overall_score numeric(38,2),
+        system_design_score numeric(38,2),
+        last_updated timestamp(6),
+        company_name varchar(255),
+        primary key (id),
+        unique (company_name)
+    )
+2026-05-30T19:45:49.602-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create table hireloop.resume_master (
+        id integer generated by default as identity,
+        user_id integer,
+        created_at timestamp(6),
+        updated_at timestamp(6),
+        resume_json TEXT not null,
+        primary key (id)
+    )
+2026-05-30T19:45:49.621-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create table hireloop.topic_coverage (
+        id integer generated by default as identity,
+        topic_id integer unique,
+        updated_at timestamp(6),
+        notes varchar(255),
+        status varchar(255),
+        primary key (id)
+    )
+2026-05-30T19:45:49.660-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create table hireloop.topic_universe (
+        global_frequency numeric(38,2),
+        id integer generated by default as identity,
+        created_at timestamp(6),
+        category varchar(255),
+        topic varchar(255),
+        primary key (id),
+        unique (category, topic)
+    )
+2026-05-30T19:45:49.700-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create index idx_application_job 
+       on hireloop.application (job_id)
+2026-05-30T19:45:49.705-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create index idx_application_status 
+       on hireloop.application (pipeline_status)
+2026-05-30T19:45:49.718-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create index idx_job_company 
+       on hireloop.job (company_name)
+2026-05-30T19:45:49.742-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    create index idx_job_status 
+       on hireloop.job (status)
+2026-05-30T19:45:49.767-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    alter table if exists hireloop.application 
+       add constraint FKls6sryk64ga8o5t4bym8qu3vm 
+       foreign key (job_id) 
+       references hireloop.job
+2026-05-30T19:45:49.864-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    alter table if exists hireloop.company_topic_frequency 
+       add constraint FKbjq3c3dv77g9qj54jydqe684k 
+       foreign key (topic_id) 
+       references hireloop.topic_universe
+2026-05-30T19:45:49.872-05:00 DEBUG 12559 --- [hireloop] [           main] org.hibernate.SQL                        : 
+    alter table if exists hireloop.topic_coverage 
+       add constraint FKlayr8r166p2ffhpkia2ok5vxk 
+       foreign key (topic_id) 
+       references hireloop.topic_universe
+2026-05-30T19:45:49.894-05:00  INFO 12559 --- [hireloop] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-30T19:45:50.951-05:00  WARN 12559 --- [hireloop] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-30T19:45:51.732-05:00  INFO 12559 --- [hireloop] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2026-05-30T19:45:51.754-05:00  INFO 12559 --- [hireloop] [           main] com.hireloop.HireLoopApplication         : Started HireLoopApplication in 9.504 seconds (process running for 10.471)
+2026-05-30T19:46:15.688-05:00  INFO 12559 --- [hireloop] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-30T19:46:15.692-05:00  INFO 12559 --- [hireloop] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-30T19:46:15.707-05:00  INFO 12559 --- [hireloop] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 15 ms
+2026-05-30T19:46:16.110-05:00 DEBUG 12559 --- [hireloop] [nio-8080-exec-1] org.hibernate.SQL                        : 
+    insert 
+    into
+        hireloop.topic_universe
+        (category, global_frequency, topic) 
+    values
+        (?, ?, ?) 
+    returning id
+2026-05-30T19:46:16.420-05:00 DEBUG 12559 --- [hireloop] [nio-8080-exec-2] org.hibernate.SQL                        : 
+    select
+        tu1_0.id,
+        tu1_0.category,
+        tu1_0.created_at,
+        tu1_0.global_frequency,
+        tu1_0.topic 
+    from
+        hireloop.topic_universe tu1_0
+2026-05-30T19:46:16.478-05:00 DEBUG 12559 --- [hireloop] [nio-8080-exec-4] org.hibernate.SQL                        : 
+    insert 
+    into
+        hireloop.job
+        (company_name, confirmed, fit_score, jd_text, jd_url, status, tailored_resume_json, title, updated_at) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?) 
+    returning id
+2026-05-30T19:46:16.523-05:00 DEBUG 12559 --- [hireloop] [nio-8080-exec-5] org.hibernate.SQL                        : 
+    select
+        j1_0.id,
+        j1_0.company_name,
+        j1_0.confirmed,
+        j1_0.created_at,
+        j1_0.fit_score,
+        j1_0.jd_text,
+        j1_0.jd_url,
+        j1_0.status,
+        j1_0.tailored_resume_json,
+        j1_0.title,
+        j1_0.updated_at 
+    from
+        hireloop.job j1_0
+2026-05-30T19:46:16.634-05:00 DEBUG 12559 --- [hireloop] [nio-8080-exec-6] org.hibernate.SQL                        : 
+    select
+        pr1_0.id,
+        pr1_0.behavioral_score,
+        pr1_0.company_name,
+        pr1_0.dsa_score,
+        pr1_0.last_updated,
+        pr1_0.overall_score,
+        pr1_0.system_design_score 
+    from
+        hireloop.prep_readiness pr1_0 
+    where
+        pr1_0.company_name=?
+2026-05-30T19:46:16.654-05:00 DEBUG 12559 --- [hireloop] [nio-8080-exec-6] org.hibernate.SQL                        : 
+    insert 
+    into
+        hireloop.prep_readiness
+        (behavioral_score, company_name, dsa_score, last_updated, overall_score, system_design_score) 
+    values
+        (?, ?, ?, ?, ?, ?) 
+    returning id
+2026-05-30T19:46:16.733-05:00 DEBUG 12559 --- [hireloop] [nio-8080-exec-8] org.hibernate.SQL                        : 
+    select
+        tc1_0.id,
+        tc1_0.notes,
+        tc1_0.status,
+        tc1_0.topic_id,
+        tc1_0.updated_at 
+    from
+        hireloop.topic_coverage tc1_0
+2026-05-30T19:46:16.737-05:00 DEBUG 12559 --- [hireloop] [nio-8080-exec-8] org.hibernate.SQL                        : 
+    select
+        pr1_0.id,
+        pr1_0.behavioral_score,
+        pr1_0.company_name,
+        pr1_0.dsa_score,
+        pr1_0.last_updated,
+        pr1_0.overall_score,
+        pr1_0.system_design_score 
+    from
+        hireloop.prep_readiness pr1_0
