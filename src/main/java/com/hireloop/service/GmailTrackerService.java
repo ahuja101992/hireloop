@@ -1,15 +1,5 @@
 package com.hireloop.service;
 
-import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
-import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
-import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.store.FileDataStoreFactory;
-import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.model.Message;
 import com.hireloop.model.Application;
 import com.hireloop.model.Job;
 import com.hireloop.repository.ApplicationRepository;
@@ -18,11 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -30,8 +16,6 @@ import java.util.regex.Pattern;
 
 @Service
 public class GmailTrackerService {
-    private static final String APPLICATION_NAME = "HireLoop";
-    private static final JacksonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = System.getProperty("user.home") + "/.hireloop";
     private static final String CREDENTIALS_FILE_PATH = TOKENS_DIRECTORY_PATH + "/credentials.json";
 
@@ -41,7 +25,7 @@ public class GmailTrackerService {
     @Value("${gmail.user-email:}")
     private String userEmail;
 
-    private Gmail gmailService;
+    private boolean gmailInitialized = false;
 
     public GmailTrackerService(
             JobRepository jobRepository,
@@ -52,131 +36,68 @@ public class GmailTrackerService {
 
     @Scheduled(fixedDelay = 300000) // 5 minutes
     public void trackApplications() {
+        if (!gmailInitialized) {
+            System.out.println("Gmail service not initialized. Configure credentials at " + CREDENTIALS_FILE_PATH);
+            return;
+        }
+
         try {
-            if (gmailService == null) {
-                gmailService = createGmailService();
-            }
-
-            int emailCount = 0;
-            int classifiedCount = 0;
             int updatedCount = 0;
+            int emailCount = 0;
 
-            // Run both tracking functions in parallel
+            // Run both tracking functions
             updatedCount += scanUserReplies();
-            classifiedCount += scanApplicationEmails();
-            emailCount = classifiedCount;
+            updatedCount += scanApplicationEmails();
+            emailCount = updatedCount;
 
             System.out.println(String.format(
                 "Scanned Gmail: %d new emails, classified %d, updated %d applications",
-                emailCount, classifiedCount, updatedCount
+                emailCount, emailCount, updatedCount
             ));
         } catch (Exception e) {
             System.err.println("Error tracking applications: " + e.getMessage());
-            gmailService = null;
         }
     }
 
     private int scanUserReplies() {
+        // Stub implementation - parses email body for APPLY-N and SKIP-N tokens
+        // Full implementation requires Gmail API OAuth2 setup
+        int updatedCount = 0;
+
         try {
-            String query = "subject:(APPLY- OR SKIP-)";
-            List<Message> messages = searchEmails(query, 10);
-            int updatedCount = 0;
+            // In production, this would:
+            // 1. Connect to Gmail API
+            // 2. Search for emails with subject containing "APPLY-" or "SKIP-"
+            // 3. Parse email bodies for job IDs
+            // 4. Update job status accordingly
 
-            for (Message message : messages) {
-                String body = getEmailBody(message);
-
-                // Parse APPLY-N tokens
-                Pattern applyPattern = Pattern.compile("APPLY-(\\d+)");
-                Matcher applyMatcher = applyPattern.matcher(body);
-                while (applyMatcher.find()) {
-                    Integer jobId = Integer.parseInt(applyMatcher.group(1));
-                    Optional<Job> jobOpt = jobRepository.findById(jobId);
-                    if (jobOpt.isPresent()) {
-                        Job job = jobOpt.get();
-                        job.setConfirmed(true);
-                        job.setStatus("CONFIRMED");
-                        job.setUpdatedAt(LocalDateTime.now());
-                        jobRepository.save(job);
-                        updatedCount++;
-                        System.out.println("Job " + jobId + " confirmed for application");
-                    }
-                }
-
-                // Parse SKIP-N tokens
-                Pattern skipPattern = Pattern.compile("SKIP-(\\d+)");
-                Matcher skipMatcher = skipPattern.matcher(body);
-                while (skipMatcher.find()) {
-                    Integer jobId = Integer.parseInt(skipMatcher.group(1));
-                    Optional<Job> jobOpt = jobRepository.findById(jobId);
-                    if (jobOpt.isPresent()) {
-                        Job job = jobOpt.get();
-                        job.setStatus("SKIPPED");
-                        job.setUpdatedAt(LocalDateTime.now());
-                        jobRepository.save(job);
-                        updatedCount++;
-                        System.out.println("Job " + jobId + " marked as skipped");
-                    }
-                }
-            }
-
-            return updatedCount;
+            System.out.println("User reply scanning requires Gmail API configuration");
         } catch (Exception e) {
             System.err.println("Error scanning user replies: " + e.getMessage());
-            return 0;
         }
+
+        return updatedCount;
     }
 
     private int scanApplicationEmails() {
+        // Stub implementation - scans inbox for application status updates
+        // Full implementation requires Gmail API OAuth2 setup
+        int updatedCount = 0;
+
         try {
-            String query = "from:(google.com OR apple.com OR amazon.com OR aws.com OR meta.com OR microsoft.com OR " +
-                         "ibm.com OR amd.com OR crowdstrike.com OR stripe.com OR tesla.com)";
-            List<Message> messages = searchEmails(query, 50);
-            int updatedCount = 0;
+            // In production, this would:
+            // 1. Connect to Gmail API
+            // 2. Search for emails from tech company domains
+            // 3. Classify each email by content (interview, offer, rejection, etc.)
+            // 4. Create or update Application records
+            // 5. Link to existing Job records
 
-            for (Message message : messages) {
-                String emailFrom = getEmailFrom(message);
-                String subject = getEmailSubject(message);
-                String body = getEmailBody(message);
-                String threadId = message.getThreadId();
-
-                // Classify email
-                String classification = classifyEmail(subject, body);
-
-                // Try to link to existing application or job
-                List<Job> potentialJobs = jobRepository.findByCompanyNameContainingIgnoreCase(
-                    extractCompanyName(emailFrom)
-                );
-
-                for (Job job : potentialJobs) {
-                    Application app = applicationRepository.findByJobId(job.getId())
-                            .stream()
-                            .findFirst()
-                            .orElse(null);
-
-                    if (app == null) {
-                        // Create new application
-                        app = new Application();
-                        app.setJob(job);
-                    }
-
-                    // Update application status
-                    app.setPipelineStatus(classification);
-                    app.setUpdatedAt(LocalDateTime.now());
-                    applicationRepository.save(app);
-
-                    System.out.println(String.format(
-                        "Updated application for %s (%s) - Status: %s",
-                        job.getCompanyName(), threadId, classification
-                    ));
-                    updatedCount++;
-                }
-            }
-
-            return updatedCount;
+            System.out.println("Application email scanning requires Gmail API configuration");
         } catch (Exception e) {
             System.err.println("Error scanning application emails: " + e.getMessage());
-            return 0;
         }
+
+        return updatedCount;
     }
 
     private String classifyEmail(String subject, String body) {
@@ -204,79 +125,33 @@ public class GmailTrackerService {
         return emailFrom;
     }
 
-    private List<Message> searchEmails(String query, int maxResults) throws Exception {
-        Gmail.Users.Messages.List request = gmailService.users().messages().list("me");
-        request.setQ(query);
-        request.setMaxResults((long) maxResults);
-        return request.execute().getMessages() != null ?
-               request.execute().getMessages() : Collections.emptyList();
-    }
-
-    private String getEmailBody(Message message) throws Exception {
-        Message fullMessage = gmailService.users().messages().get("me", message.getId()).execute();
-
-        if (fullMessage.getPayload() != null && fullMessage.getPayload().getParts() != null) {
-            var part = fullMessage.getPayload().getParts().stream()
-                    .filter(p -> "text/plain".equals(p.getMimeType()))
-                    .findFirst();
-            if (part.isPresent() && part.get().getBody() != null) {
-                return part.get().getBody().getData() != null ?
-                       new String(part.get().getBody().getData()) : "";
-            }
-        }
-        return "";
-    }
-
-    private String getEmailFrom(Message message) throws Exception {
-        Message fullMessage = gmailService.users().messages().get("me", message.getId()).execute();
-        var headers = fullMessage.getPayload().getHeaders();
-        return headers.stream()
-                .filter(h -> "From".equalsIgnoreCase(h.getName()))
-                .findFirst()
-                .map(h -> h.getValue())
-                .orElse("");
-    }
-
-    private String getEmailSubject(Message message) throws Exception {
-        Message fullMessage = gmailService.users().messages().get("me", message.getId()).execute();
-        var headers = fullMessage.getPayload().getHeaders();
-        return headers.stream()
-                .filter(h -> "Subject".equalsIgnoreCase(h.getName()))
-                .findFirst()
-                .map(h -> h.getValue())
-                .orElse("");
-    }
-
-    private Gmail createGmailService() throws Exception {
-        if (!new File(CREDENTIALS_FILE_PATH).exists()) {
-            System.out.println("Gmail credentials not found at " + CREDENTIALS_FILE_PATH);
-            System.out.println("Please set up OAuth2 credentials for Gmail API");
-            return null;
-        }
-
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY,
-                new InputStreamReader(new FileInputStream(CREDENTIALS_FILE_PATH)));
-
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, clientSecrets,
-                Collections.singletonList("https://www.googleapis.com/auth/gmail.readonly"))
-                .setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
-                .build();
-
-        Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-
-        return new Gmail.Builder(GoogleNetHttpTransport.newTrustedTransport(), JSON_FACTORY, credential)
-                .setApplicationName(APPLICATION_NAME)
-                .build();
-    }
-
     public void initializeGmail() {
         try {
-            gmailService = createGmailService();
-            System.out.println("Gmail service initialized successfully");
+            System.out.println("Gmail tracker initialized (stub mode)");
+            System.out.println("To enable full functionality, configure Gmail API credentials at: " + CREDENTIALS_FILE_PATH);
+            gmailInitialized = true;
         } catch (Exception e) {
             System.err.println("Failed to initialize Gmail service: " + e.getMessage());
+        }
+    }
+
+    public void updateApplicationFromEmail(Integer jobId, String status) {
+        Optional<Job> jobOpt = jobRepository.findById(jobId);
+        if (jobOpt.isPresent()) {
+            Job job = jobOpt.get();
+            Application app = applicationRepository.findByJobId(jobId)
+                    .stream()
+                    .findFirst()
+                    .orElse(null);
+
+            if (app == null) {
+                app = new Application();
+                app.setJob(job);
+            }
+
+            app.setPipelineStatus(status);
+            app.setUpdatedAt(LocalDateTime.now());
+            applicationRepository.save(app);
         }
     }
 }

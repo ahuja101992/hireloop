@@ -44,7 +44,12 @@ public class ResumeAdapterService {
         JsonNode resumeChanges = fitScorerResponse.get("resume_changes");
 
         // Apply changes to resume JSON
-        ObjectNode modifiedResume = (ObjectNode) objectMapper.readTree(baseResumeJson);
+        ObjectNode modifiedResume = null;
+        try {
+            modifiedResume = (ObjectNode) objectMapper.readTree(baseResumeJson);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse resume JSON: " + e.getMessage(), e);
+        }
         int changeCount = applyResumeChanges(modifiedResume, resumeChanges);
 
         // Determine change magnitude

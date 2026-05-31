@@ -1,9 +1,18 @@
 companies:
-  - name: Apple
-    ats: workday
-    careers_url: https://jobs.apple.com
+  # Austin Big Tech - Principal/Executive level focus
+  - name: Tesla
+    ats: custom
+    careers_url: https://www.tesla.com/careers
+    api_url: https://www.tesla.com/careers/api/v1/jobs
     priority: high
-    apply_readiness_threshold: 80
+    apply_readiness_threshold: 85
+
+  - name: Apple
+    ats: greenhouse
+    careers_url: https://jobs.apple.com
+    api_url: https://boards-api.greenhouse.io/v1/boards/apple/jobs
+    priority: high
+    apply_readiness_threshold: 85
 
   - name: Google
     ats: greenhouse
@@ -11,21 +20,59 @@ companies:
     priority: high
     apply_readiness_threshold: 85
 
-  - name: Stripe
-    ats: lever
-    api_url: https://api.lever.co/v0/postings/stripe
+  - name: Amazon
+    ats: custom
+    careers_url: https://www.amazon.jobs
+    api_url: https://amazon.jobs/api/v1/jobs
     priority: high
     apply_readiness_threshold: 85
 
-  - name: Indeed Austin
-    ats: lever
-    api_url: https://api.lever.co/v0/postings/indeed
-    priority: medium
-    apply_readiness_threshold: 78
+  - name: AWS
+    ats: custom
+    careers_url: https://aws.amazon.com/careers
+    api_url: https://amazon.jobs/api/v1/jobs?department=aws
+    priority: high
+    apply_readiness_threshold: 85
+
+  - name: Meta
+    ats: workday
+    careers_url: https://www.metacareers.com
+    api_url: https://www.metacareers.com/api/v1/jobs
+    priority: high
+    apply_readiness_threshold: 85
+
+  - name: IBM
+    ats: custom
+    careers_url: https://www.ibm.com/careers
+    api_url: https://www.ibm.com/careers/api/v1/jobs
+    priority: high
+    apply_readiness_threshold: 85
+
+  - name: AMD
+    ats: greenhouse
+    careers_url: https://amd.wd5.myworkdayjobs.com
+    api_url: https://boards-api.greenhouse.io/v1/boards/amd/jobs
+    priority: high
+    apply_readiness_threshold: 85
+
+  - name: Microsoft
+    ats: custom
+    careers_url: https://careers.microsoft.com
+    api_url: https://careers.microsoft.com/api/v1/jobs
+    priority: high
+    apply_readiness_threshold: 85
+
+  - name: CrowdStrike
+    ats: greenhouse
+    careers_url: https://crowdstrike.com/careers
+    api_url: https://boards-api.greenhouse.io/v1/boards/crowdstrike/jobs
+    priority: high
+    apply_readiness_threshold: 85
 
   - name: Stripe
-    ats: lever
-    api_url: https://api.lever.co/v0/postings/stripe
+    ats: custom
+    careers_url: https://stripe.com/careers
+    api_url: https://stripe.com/api/v1/jobs
     priority: high
     apply_readiness_threshold: 85
 

@@ -28,9 +28,11 @@
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/repository/TopicCoverageRepository.java
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/repository/TopicUniverseRepository.java
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/FitScorerService.java
+/Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/GmailTrackerService.java
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/IntelScrapeService.java
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/JobFilterService.java
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/JobPollerService.java
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/NotificationService.java
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/PrepTrackerService.java
 /Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/ResumeAdapterService.java
+/Users/akshitahuja/IdeaProjects/hireloop/src/main/java/com/hireloop/service/ResumeParserService.java
