@@ -1,0 +1,38 @@
+companies:
+  - name: Apple
+    ats: workday
+    careers_url: https://jobs.apple.com
+    priority: high
+    apply_readiness_threshold: 80
+
+  - name: Google
+    ats: greenhouse
+    api_url: https://boards-api.greenhouse.io/v1/boards/google/jobs
+    priority: high
+    apply_readiness_threshold: 85
+
+  - name: Stripe
+    ats: lever
+    api_url: https://api.lever.co/v0/postings/stripe
+    priority: high
+    apply_readiness_threshold: 85
+
+  - name: Indeed Austin
+    ats: lever
+    api_url: https://api.lever.co/v0/postings/indeed
+    priority: medium
+    apply_readiness_threshold: 78
+
+  - name: Stripe
+    ats: lever
+    api_url: https://api.lever.co/v0/postings/stripe
+    priority: high
+    apply_readiness_threshold: 85
+
+intel_sources:
+  - glassdoor
+  - blind
+  - reddit_cscareerquestions
+  - reddit_experienceddevs
+  - levels_fyi
+  - leetcode_discuss
