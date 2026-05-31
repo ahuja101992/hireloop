@@ -21,6 +21,10 @@ public class Job {
     @Column(columnDefinition = "TEXT")
     private String jdText;
 
+    private String atsType;
+    private LocalDateTime postedAt;
+    private LocalDateTime discoveredAt;
+
     private BigDecimal fitScore;
     private String status = "PENDING";
     private Boolean confirmed = false;
@@ -48,6 +52,15 @@ public class Job {
 
     public String getJdText() { return jdText; }
     public void setJdText(String jdText) { this.jdText = jdText; }
+
+    public String getAtsType() { return atsType; }
+    public void setAtsType(String atsType) { this.atsType = atsType; }
+
+    public LocalDateTime getPostedAt() { return postedAt; }
+    public void setPostedAt(LocalDateTime postedAt) { this.postedAt = postedAt; }
+
+    public LocalDateTime getDiscoveredAt() { return discoveredAt; }
+    public void setDiscoveredAt(LocalDateTime discoveredAt) { this.discoveredAt = discoveredAt; }
 
     public BigDecimal getFitScore() { return fitScore; }
     public void setFitScore(BigDecimal fitScore) { this.fitScore = fitScore; }
