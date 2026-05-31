@@ -26,6 +26,9 @@ public class ConfigController {
             "notifyApplications", true,
             "digestFrequency", "immediate"
         ));
+        runtimeConfig.put("targetCompanies", java.util.List.of(
+            "Google", "Meta", "Apple", "Microsoft", "Amazon"
+        ));
     }
 
     @GetMapping
@@ -81,5 +84,18 @@ public class ConfigController {
     public Map<String, Object> updateEmailPreferences(@RequestBody Map<String, Object> preferences) {
         runtimeConfig.put("emailPreferences", preferences);
         return getEmailPreferences();
+    }
+
+    @GetMapping("/target-companies")
+    public Map<String, Object> getTargetCompanies() {
+        return Map.of(
+            "companies", runtimeConfig.getOrDefault("targetCompanies", java.util.List.of())
+        );
+    }
+
+    @PostMapping("/target-companies")
+    public Map<String, Object> updateTargetCompanies(@RequestBody Map<String, java.util.List<String>> data) {
+        runtimeConfig.put("targetCompanies", data.get("companies"));
+        return getTargetCompanies();
     }
 }

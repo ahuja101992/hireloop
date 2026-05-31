@@ -10,6 +10,8 @@ function App() {
     notifyApplications: true,
     digestFrequency: 'immediate'
   });
+  const [targetCompanies, setTargetCompanies] = useState([]);
+  const [newCompanyInput, setNewCompanyInput] = useState('');
   const [resumeStatus, setResumeStatus] = useState({ exists: false, size: 0 });
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
@@ -33,6 +35,10 @@ function App() {
       const emailResponse = await fetch('/api/config/email-preferences');
       const emailData = await emailResponse.json();
       setEmailPreferences(emailData);
+
+      const companiesResponse = await fetch('/api/config/target-companies');
+      const companiesData = await companiesResponse.json();
+      setTargetCompanies(companiesData.companies || []);
     } catch (error) {
       console.error('Failed to load settings:', error);
     } finally {
@@ -58,6 +64,14 @@ function App() {
       });
       const emailData = await emailResponse.json();
       setEmailPreferences(emailData);
+
+      const companiesResponse = await fetch('/api/config/target-companies', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ companies: targetCompanies })
+      });
+      const companiesData = await companiesResponse.json();
+      setTargetCompanies(companiesData.companies || []);
 
       setSettingsSaved(true);
       setTimeout(() => setSettingsSaved(false), 3000);
@@ -103,6 +117,17 @@ function App() {
     } finally {
       setResumeUploading(false);
     }
+  };
+
+  const addCompany = () => {
+    if (newCompanyInput.trim() && !targetCompanies.includes(newCompanyInput.trim())) {
+      setTargetCompanies([...targetCompanies, newCompanyInput.trim()]);
+      setNewCompanyInput('');
+    }
+  };
+
+  const removeCompany = (company) => {
+    setTargetCompanies(targetCompanies.filter(c => c !== company));
   };
 
   const tabClass = (tab) => activeTab === tab
@@ -305,6 +330,41 @@ function App() {
                 React.createElement('option', { value: 'immediate' }, 'Immediate'),
                 React.createElement('option', { value: 'daily' }, 'Daily Digest'),
                 React.createElement('option', { value: 'weekly' }, 'Weekly Digest')
+              )
+            )
+          )
+        ),
+
+        // Target Companies Section
+        React.createElement('div', { className: 'mb-8 pb-8 border-b' },
+          React.createElement('h3', { className: 'text-lg font-semibold mb-4' }, 'Target Companies'),
+          React.createElement('div', { className: 'space-y-4' },
+            React.createElement('div', { className: 'flex gap-2' },
+              React.createElement('input', {
+                type: 'text',
+                value: newCompanyInput,
+                onChange: (e) => setNewCompanyInput(e.target.value),
+                onKeyPress: (e) => e.key === 'Enter' && addCompany(),
+                placeholder: 'Add a company...',
+                className: 'flex-1 px-3 py-2 border border-gray-300 rounded',
+                disabled: settingsLoading
+              }),
+              React.createElement('button', {
+                onClick: addCompany,
+                className: 'px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded cursor-pointer disabled:opacity-50',
+                disabled: settingsLoading || !newCompanyInput.trim()
+              }, 'Add')
+            ),
+            React.createElement('div', { className: 'flex flex-wrap gap-2' },
+              targetCompanies.map((company, i) =>
+                React.createElement('div', { key: i, className: 'bg-gray-200 px-3 py-1 rounded-full flex items-center gap-2' },
+                  React.createElement('span', null, company),
+                  React.createElement('button', {
+                    onClick: () => removeCompany(company),
+                    className: 'font-bold cursor-pointer hover:text-red-600',
+                    disabled: settingsLoading
+                  }, '✕')
+                )
               )
             )
           )
