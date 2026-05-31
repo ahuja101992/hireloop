@@ -25,9 +25,18 @@ public class ReadinessController {
     public Map<String, Object> getOverallReadiness() {
         var globalScore = prepTrackerService.calculateGlobalReadiness();
         var companies = prepRepository.findAll();
+
+        var overallData = Map.of(
+            "overallScore", globalScore,
+            "dsa", 0,
+            "sd", 0,
+            "behavioral", 0,
+            "nextTopics", List.of()
+        );
+
         return Map.of(
-                "global_readiness", globalScore,
-                "companies", companies
+                "overall", overallData,
+                "byCompany", companies
         );
     }
 

@@ -1,6 +1,7 @@
 package com.hireloop.service;
 
 import com.hireloop.model.Job;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,9 @@ import java.util.*;
 public class NotificationService {
     private final Optional<JavaMailSender> mailSender;
     private final List<ResumeChangeNotification> digestQueue = Collections.synchronizedList(new ArrayList<>());
+
+    @Value("${app.base-url:http://localhost:8080}")
+    private String baseUrl;
 
     public NotificationService(Optional<JavaMailSender> mailSender) {
         this.mailSender = mailSender;
@@ -24,14 +28,22 @@ public class NotificationService {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(recipientEmail);
             message.setSubject("New Job Opportunity: " + job.getTitle());
+
+            boolean resumeNeedsChanges = job.getTailoredResumeJson() != null && !job.getTailoredResumeJson().isEmpty();
+            String resumeStatus = resumeNeedsChanges ? "⚠️ Resume needs tailoring" : "✓ Resume is a good match";
+
             message.setText(String.format("""
                     A new job opportunity has been found:
 
                     Company: %s
                     Title: %s
                     Fit Score: %s
-                    URL: %s
-                    """, job.getCompanyName(), job.getTitle(), job.getFitScore(), job.getJdUrl()));
+                    Resume Status: %s
+
+                    Job URL: %s
+                    View in HireLoop: %s/dashboard/jobs/%d
+                    """, job.getCompanyName(), job.getTitle(), job.getFitScore(), resumeStatus,
+                    job.getJdUrl(), baseUrl, job.getId()));
 
             mailSender.get().send(message);
         } catch (Exception e) {
@@ -150,8 +162,8 @@ public class NotificationService {
                     Fit Score: %s
                     Job URL: %s
 
-                    Track your application in the HireLoop dashboard.
-                    """, job.getCompanyName(), job.getTitle(), job.getFitScore(), job.getJdUrl()));
+                    View in HireLoop: %s/dashboard/jobs/%d
+                    """, job.getCompanyName(), job.getTitle(), job.getFitScore(), job.getJdUrl(), baseUrl, job.getId()));
             mailSender.get().send(message);
         } catch (Exception e) {
             System.err.println("Error sending submission confirmation: " + e.getMessage());
@@ -175,8 +187,10 @@ public class NotificationService {
                     Fit Score: %s
                     Job URL: %s
 
+                    View in HireLoop: %s/dashboard/jobs/%d
+
                     Reason: %s
-                    """, job.getCompanyName(), job.getTitle(), job.getFitScore(), job.getJdUrl(), errorMessage));
+                    """, job.getCompanyName(), job.getTitle(), job.getFitScore(), job.getJdUrl(), baseUrl, job.getId(), errorMessage));
             mailSender.get().send(message);
         } catch (Exception e) {
             System.err.println("Error sending failure notification: " + e.getMessage());
