@@ -41,10 +41,10 @@ An AI-powered application that helps you discover, score, and prepare for job op
    - **Track Status**: Monitor pipeline status (Applied, Interviewing, Offer, Rejected, etc.)
    - **History**: Maintain record of all applications
 
-### 6. **Email Notifications** *(Optional - Currently Disabled)*
+### 6. **Email Notifications** *(Enabled)*
    - New job opportunity alerts
-   - Interview prep readiness reports
-   - Application status updates
+   - Interview prep readiness reports (weekly, automated)
+   - Application status updates (via Gmail inbox scan every 5 min)
 
 ---
 
@@ -112,6 +112,21 @@ The application will start on **http://localhost:8080**
 
 ---
 
+## 🖥️ Dashboard (UI)
+
+A React-style dashboard (served as static JSX from `src/main/resources/static/`) is available at **http://localhost:8080** (`index.html`). Components:
+
+| Component | Purpose |
+|-----------|---------|
+| `Layout.jsx` | Shell/nav across Dashboard, Jobs, Pipeline, Settings |
+| `JobList.jsx` | Discovered jobs, scores, confirm/skip actions |
+| `ReadinessDashboard.jsx` | Global + per-company prep readiness |
+| `TopicTracker.jsx` | DSA/System Design/Behavioral topic coverage |
+| `PipelineView.jsx` | Application pipeline status |
+| `SettingsModal.jsx` | Resume upload, target companies, job filters, email preferences, auto-apply toggle |
+
+---
+
 ## 📡 API Endpoints
 
 ### Jobs Management
@@ -172,6 +187,46 @@ curl -X POST http://localhost:8080/api/readiness/Google \
 | GET | `/api/applications/{id}` | Get application details |
 | POST | `/api/applications/{id}/update-status` | Update application status |
 
+### Apply Engine
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/api/apply/{jobId}` | Run ATS auto-apply for a confirmed job |
+| POST | `/api/apply/batch` | Run auto-apply across all eligible jobs |
+| GET | `/api/apply/status` | Get apply engine status |
+| POST | `/api/apply/toggle` | Enable/disable auto-apply |
+
+ATS strategies implemented: **Greenhouse, Lever, Workday**, plus a generic `CustomApplier` fallback.
+
+### Interview Intel
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/api/intel/scrape-all` | Trigger intel scrape across target companies |
+| GET | `/api/intel/{company}` | Get scraped intel for a company |
+| GET | `/api/intel/aggregate` | Get aggregated topic universe |
+| POST | `/api/intel/brief/{company}` | Generate a company prep brief |
+| GET | `/api/intel/brief/{company}` | Fetch a generated company prep brief |
+
+### Resume
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/api/resume/status` | Check whether master resume is loaded |
+| POST | `/api/resume/upload` | Upload/parse resume (DOCX → JSON) |
+
+### Configuration
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| GET | `/api/config` | Get full config (filters, targets, LLM provider) |
+| GET/POST | `/api/config/apply-engine` | Get/update auto-apply settings |
+| POST | `/api/config/filters` | Update job filter rules |
+| POST | `/api/config/targets` | Update target companies |
+| GET/POST | `/api/config/email-preferences` | Get/update email notification preferences |
+| GET/POST | `/api/config/target-companies` | Get/update target companies (settings UI) |
+| GET/POST | `/api/config/job-filters` | Get/update job filters (settings UI) |
+
 ---
 
 ## 🔧 Configuration
@@ -188,21 +243,21 @@ llm:
     model: claude-sonnet-4-6  # or claude-haiku-4-5, claude-opus-4-7
 
 gmail:
-  enabled: false  # Set to true to enable email notifications
-  service-account-key-path: ${GMAIL_KEY_PATH}
+  enabled: true  # Email notifications + inbox tracking active
+  service-account-key-path: ${GMAIL_OAUTH_CREDENTIALS}
   user-email: ${GMAIL_USER_EMAIL}
 ```
 
-### Enable Email Notifications
+### Gmail Setup (required — enabled by default)
 
-1. Set up Gmail API service account
-2. Download service account JSON key
-3. Update `.env`:
+1. Set up Gmail API service account / OAuth2 credentials
+2. Download the credentials JSON
+3. Set in `.env`:
    ```bash
-   export GMAIL_KEY_PATH=/path/to/service-account-key.json
+   export GMAIL_OAUTH_CREDENTIALS=/path/to/credentials.json
    export GMAIL_USER_EMAIL=your-email@gmail.com
    ```
-4. Update `application.yml`: `gmail.enabled: true`
+4. To disable, set `gmail.enabled: false` in `application.yml`
 
 ---
 
@@ -219,6 +274,17 @@ For 500 job scores/month:
 | Opus 4.7 | 92/100 | $21.19 | Premium, detailed |
 
 **Current Configuration**: Claude Sonnet 4.6 (optimal cost-quality balance)
+
+---
+
+## ⏰ Scheduled Jobs
+
+| Schedule | Job | Class |
+|----------|-----|-------|
+| Daily 8:00 AM | Poll target companies for new jobs | `JobPollerService` |
+| Every 5 min | Scan Gmail inbox, classify replies/status emails | `GmailTrackerService` |
+| Weekly (Sun midnight) | Scrape company interview intel | `IntelScheduler` |
+| Weekly (Mon 9:00 AM) | Recalculate + email readiness report | `ReadinessScheduler` |
 
 ---
 
@@ -241,49 +307,30 @@ For 500 job scores/month:
 
 ## ✅ What's Working
 
-- ✅ Job creation and storage
-- ✅ Resume-job fit scoring via Claude AI
-- ✅ Interview prep readiness tracking (DSA, System Design, Behavioral)
+- ✅ Job creation, storage, and ATS polling (Greenhouse/Lever/Workday) via `JobPollerService`
+- ✅ Resume-job fit scoring via Claude AI (`FitScorerService`)
+- ✅ Resume parsing (DOCX → JSON via Apache POI) and Claude-driven tailoring (`ResumeParserService`, `ResumeAdapterService`)
+- ✅ Interview prep readiness tracking (DSA, System Design, Behavioral) with weekly report scheduler
+- ✅ Topic coverage tracking (`TopicCoverageService`)
 - ✅ Job confirmation/skip workflow
+- ✅ **Apply Engine** — automated ATS submission with Greenhouse/Lever/Workday/custom strategies, gated by human confirmation
+- ✅ **Gmail integration** — inbox scanning every 5 min, reply detection, application status classification (`GmailTrackerService`)
+- ✅ **Interview intel scraping** — weekly company intel scrape + on-demand company briefs (`IntelScrapeService`, `BriefService`)
+- ✅ **React-style dashboard UI** — Jobs, Readiness, Topics, Pipeline, and Settings (resume upload, target companies, job filters, email preferences, auto-apply toggle)
 - ✅ PostgreSQL persistence
-- ✅ REST API endpoints
-- ✅ Claude Sonnet 4.6 integration (optimal performance)
+- ✅ Full REST API (jobs, applications, apply, config, intel, resume, readiness, topics)
+- ✅ Claude Sonnet 4.6 integration (optimal cost/performance)
 
 ---
 
-## 🚧 What's Missing (Phase 4+)
+## 🚧 What's Missing / Not Yet Built
 
-### Phase 4: ApplyEngine (ATS Integration)
-- [ ] Auto-fill job applications
-- [ ] ATS form detection and population
+- [ ] LinkedIn / Indeed job scrapers (currently Greenhouse, Lever, Workday only)
+- [ ] Job deduplication across sources
 - [ ] Cover letter generation
-- [ ] Application tracking
-
-### Phase 5: Job Scraping
-- [ ] LinkedIn job scraper
-- [ ] Indeed job scraper
-- [ ] Auto-feed jobs into pipeline
-- [ ] Job deduplication
-
-### Phase 6: Email Notifications
-- [ ] Gmail API integration
-- [ ] New job alerts
-- [ ] Readiness reports
-- [ ] Application status updates
-
-### Phase 7: Interview Intel
-- [ ] Company-specific interview process extraction
-- [ ] Interview round details
-- [ ] Question bank by topic
-- [ ] Interviewer insights
-
-### Phase 8-24: Advanced Features
 - [ ] AI mock interviews
-- [ ] Performance analytics
-- [ ] Salary negotiation guidance
-- [ ] Offer comparison
-- [ ] Career path recommendations
-- [ ] Peer benchmarking
+- [ ] Performance analytics / offer comparison / salary negotiation guidance
+- [ ] Career path recommendations, peer benchmarking
 
 ---
 
@@ -323,8 +370,8 @@ curl http://localhost:8080/api/jobs/1
 ## 📝 Current Status
 
 - **Version**: 1.0.0
-- **Last Updated**: May 30, 2026
-- **Status**: MVP Complete (Steps 1-3 of 24)
+- **Last Updated**: July 24, 2026
+- **Status**: Core pipeline + Apply Engine + Gmail tracking + Interview Intel + Dashboard UI implemented; job source coverage limited to Greenhouse/Lever/Workday
 - **LLM Model**: Claude Sonnet 4.6
 - **Database**: PostgreSQL with Hibernate ORM
 
